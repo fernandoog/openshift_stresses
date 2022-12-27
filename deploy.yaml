@@ -1,0 +1,38 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: openshift_stresses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openshift_stresses
+  template:
+    metadata:
+      labels:
+        app: openshift_stresses
+    spec:
+      containers:
+        - name: openshift_stresses
+          image: scratch:latest
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: openshift_stresses
+spec:
+ports:
+  - name: http-8081
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+selector:
+  app: openshift_stresses
